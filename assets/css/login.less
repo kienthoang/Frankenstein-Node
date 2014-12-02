@@ -1,0 +1,270 @@
+@import "./reset";
+
+html
+{
+  background:url(/images/backgrounds/ac-background-texture.jpg) repeat fixed;
+  /*-webkit-background-size:cover;
+  -moz-background-size:cover;
+  -o-background-size:cover;
+  background-size:cover*/
+}
+
+body {
+  background:none;
+}
+
+input, textarea, select, .uneditable-input {
+  display: inline-block;
+  width: 210px;
+  height: 23px;
+  padding: 4px;
+  margin-bottom: 9px;
+  font-size: 13px;
+  line-height: 18px;
+  color: #555555;
+  border: 1px solid #cccccc;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+.signup-form 
+{
+  margin-left:30px;
+
+  input:not([type="submit"]) {
+    width:80%;
+  }
+
+  input[type="submit"] {
+    margin-top:10px;
+  }
+}
+
+.wrap
+{
+  padding-left:0;
+  padding-right:0;
+  width:680px;
+  margin:0 auto 20px;
+
+  .front-wrap
+  {
+    position:fixed;
+    top:20%;
+
+    h1
+    {
+      color:#fff;
+      text-shadow:1px 2px 5px #000;
+      padding-top:0;
+      margin-top:5px
+    }
+
+    p
+    {
+      color:#7f7f7f;
+      margin-top:10px
+    }
+
+    .login-btn
+    {
+      font-size:18px;
+      font-weight:900;
+      text-shadow:0 0 2px #000
+    }
+
+    .signup-btn
+    {
+      font-size:18px;
+      font-weight:900;
+      padding-left:20px
+    }
+
+    .beta
+    {
+      color:#0e4760
+    }
+  }
+}
+
+/* ----- Signup, Login, Authenticate, Welcome ----- */
+.input-double
+{
+  width:315px
+}
+
+.pad-top
+{
+  margin-top:15px
+}
+
+.help-block
+{
+  font-size:12px
+}
+
+.f_right
+{
+  float:right
+}
+
+.intro
+{
+  font-size:22px;
+  font-weight:700;
+  text-align:center;
+  padding-bottom:0
+}
+
+#signin_wrap
+{
+  padding-left:0;
+  padding-right:0;
+  width:480px;
+  margin:0 auto 20px;
+
+  h4 a
+  {
+    font-weight:bolder;
+    text-decoration:underline
+  } 
+
+  .control-group
+  {
+    float:right;
+    width:420px
+  }
+
+  .login-form
+  {
+    float:right;
+    margin-right:50px;
+    text-align:center
+  }
+
+  .intro-title
+  {
+    font-weight:700;
+    font-size:22px
+  }
+
+  .intro-logo
+  {
+    padding-left:20px
+  }
+  .forgot{
+    float:left; 
+    font-size:10px;
+    padding-top:12px; 
+    margin-left: 25px;
+  }
+
+/****** The edit photo signup page ******/
+  #choosepic_wrap{
+
+    .box-wrap{
+      width: 450px;
+    }
+
+    h3{
+      margin-bottom: 20px;
+    }
+
+    #reset-pic{
+      margin-top: 10px;
+      margin-bottom: 20px;
+      margin-left: 25px;
+    }
+
+    .dropzone {
+      margin-top: 35px;
+      width: 280px;
+    }
+
+    #continue{
+      margin-bottom: 5px;
+      margin-top: 20px;
+      float:right;
+      font-weight: bold;
+    }
+    .upload-label:hover{
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+}
+
+.box-wrap
+{
+  padding:20px;
+  width:430px;
+  -webkit-box-shadow:1px 1px 5px 1px #7f7f7f;
+  -moz-box-shadow:1px 1px 5px 1px #7f7f7f;
+  box-shadow:0 2px 4px 1px #bbb;
+  border:1px solid #d7d7d7;
+  border-radius:10px;
+  background-color:#fff
+}
+
+.intro-logo
+{
+  padding-top:15%;
+  text-align:center;
+  padding-bottom:5px
+}
+
+#signup
+{
+  float:right;
+  padding-right:60px
+}
+
+.form-horizontal
+{
+  float:left;
+  padding-right:30px;
+  padding-bottom:0;
+  margin-bottom:0;
+}
+
+#select02
+{
+  margin-bottom:18px;
+}
+
+span .validation-errors
+{
+  color:red;
+  font-size:20px;
+}
+
+.fb-login
+{
+  text-align:center;
+  padding-bottom:15px;
+  padding-top:15px;
+}
+
+.or
+{
+  background:url(/images/backgrounds/or-bg.jpg) no-repeat;
+  height:15px;
+  width:400px;
+  text-align:center;
+  margin-left:20px;
+  padding-bottom:20px;
+  padding-top:10px;
+}
+
+.intro-tag
+{
+  padding-top:5px;
+  text-align:center;
+  font-size:15px;
+
+  a
+  {
+    text-decoration:underline;
+  }
+}

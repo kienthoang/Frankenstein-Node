@@ -17,6 +17,8 @@ module.exports = () ->
   app.use(cookieParser());
   app.use(express.static(path.join(__dirname, 'public')));
 
+  app.use require("connect-assets")() 
+
   # Routing.
   require('./routes/router.coffee')(app)
 
