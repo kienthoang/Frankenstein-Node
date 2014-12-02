@@ -16,6 +16,7 @@ app = express()
 mongoose.connect "mongodb://localhost/frankenstein"
 
 User = require './models/user'
+Actor = require './models/actor'
 
 passport = require 'passport'
 LocalStrategy = require('passport-local').Strategy
@@ -87,3 +88,8 @@ module.exports = () ->
     port = server.address().port
 
     console.log 'Frankenstein app running at http://%s:%s', host, port   
+
+    Actor.find {}, (err, actors) ->
+      if actors.length == 0
+        console.log 'Importing data from psql...'
+        require './importer'
