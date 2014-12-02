@@ -1,7 +1,29 @@
 doctype html
 html
   head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    // jQuery Stylesheets
+    != css("lib/jquery-ui")
+
+    // Bootstrap Stylesheets
+    != css("lib/bootstrap")
+
+    // Layout Stylesheets
+    != css("layout")
+    
+    // Static Stylesheets
+    != css("buttons")
+
+    // JQuery + JQuery UI
+    script(type="text/javascript",src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js")
+    script(type="text/javascript",src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js")
+
+    != js("lib/bootstrap/bootstrap.js")
+
+#top
   body
-    block content
+    #wrapper
+      // Main content
+      #main-content
+        #content
+          if (typeof(content) != "undefined")
+            != content

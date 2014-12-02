@@ -1,9 +1,16 @@
 passport = require 'passport'
 
 module.exports = (app) ->
+  app.renderViewWithLayout = (res, view, locals= {}) ->
+    res.render view, locals, (err, html) ->
+      res.locals.content = html
+      res.render "layout", (err, html) ->
+        console.log "Error: " + err
+        res.send html
+
   app.get '/login', (req, res) ->
-    res.render 'login' 
-    
+    app.renderViewWithLayout res, 'login' 
+
   app.get '*', (req, res) ->
     if not req.user?
       res.redirect '/login'
