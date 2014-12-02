@@ -1,26 +1,75 @@
-######################## Import actors ########################
+request = require "request"
+
 Actor = require './models/actor'
+Crew = require './models/crew'
+Responsibility = require './models/responsibility'
+Role = require './models/role'
+Stage = require './models/stage'
+
+######################## Import actors ########################
 
 # Send a post request to get the actors data.
-actorsJsonData = '{"__actors__": [[1, "Wilhelm C. Rontgen"], [2, "Hendrik A. Lorentz"], [3, "Pieter Zeeman"], [4, "Antoine Henri Becquerel"], [5, "Pierre Curie"], [6, "Marie Curie"], [7, "John W. Strutt"], [8, "Philipp E. A. von Lenard"], [9, "Sir Joseph J. Thomson"], [10, "Albert A. Michelson"], [11, "Gabriel Lippmann"], [12, "Carl F. Braun"], [13, "Guglielmo Marconi"], [14, "Johannes D. van der Waals"], [15, "Wilhelm Wien"], [16, "Nils G. Dalen"], [17, "Heike Kamerlingh Onnes"], [18, "Max von Laue"], [19, "Sir William H. Bragg"], [20, "Sir William L. Bragg"], [21, "Charles G. Barkla"], [22, "Max K. E. L. Planck"], [23, "Johannes Stark"], [24, "Charles E. Guillaume"], [25, "Albert Einstein"], [26, "Niels Bohr"], [27, "Robert A. Millikan"], [28, "Karl M. G. Siegbahn"], [29, "James Franck"], [30, "Gustav Hertz"], [31, "Jean B. Perrin"], [32, "Arthur H. Compton"], [33, "Charles T. R. Wilson"], [34, "Owen W. Richardson"], [35, "Prince Louis-Victor de Broglie"], [36, "Sir Chandrasekhara V. Raman"], [37, "Werner Heisenberg"], [38, "Paul A. M. Dirac"], [39, "Erwin Schrodinger"], [40, "Sir James Chadwick"], [41, "Carl D. Anderson"], [42, "Victor F. Hess"], [43, "Clinton J. Davisson"], [44, "Sir George P. Thomson"], [45, "Enrico Fermi"], [46, "Ernest O. Lawrence"], [47, "Otto Stern"], [48, "Isidor Isaac Rabi"], [49, "Wolfgang Pauli"], [50, "Percy W. Bridgman"], [51, "Sir Edward V. Appleton"], [52, "Patrick M. S. Blackett"], [53, "Hideki Yukawa"], [54, "Cecil F. Powell"], [55, "Adam"], [56, "Maria Sharapova"], [57, "Petra Kvitova"], [58, "Ana Ivanovic"], [59, "Li Na"], [60, "Simona Halep"]]}'
+request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__actors__%5D', (error, response, actorsJsonData) ->
+  console.log 'Data: ' + actorsJsonData
 
-# Process the actors data.
-actorsData = JSON.parse actorsJsonData
-for actor in actorsData.__actors__
-  Actor.createNewActor actor[0], actor[1], (err, actor) ->
-    if error?
-      console.log 'Error while creating actor ' + actor + ': ' + err
+  # Process the actors data.
+  actorsData = JSON.parse actorsJsonData
+  for actor in actorsData.__actors__
+    Actor.createNewActor actor[0], actor[1], (err, actor) ->
+      if error?
+        console.log 'Error while creating actor ' + actor + ': ' + err
+
+
+######################## Import crew ########################
+# Send a post request to get the crew data.
+request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__crew__%5D', (error, response, crewJsonData) ->
+  console.log 'Data: ' + crewJsonData
+
+  # Process the crew data.
+  crewData = JSON.parse crewJsonData
+  for crew in crewData.__crew__
+    Crew.createNewCrew crew[0], crew[1], (err, crew) ->
+      if error?
+        console.log 'Error while creating crew ' + crew + ': ' + err
 
 
 ######################## Import stages ########################
-Stage = require './models/stage'
+# Send a post request to get the stages data.
+request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__stages__%5D', (error, response, stagesJsonData) ->
+  console.log 'Data: ' + stagesJsonData
 
-# Send a post request to get the actors data.
-stagesJsonData = '{"__stages__": [[1, "Lab", "Victors lab"], [2, "Living Room", "Victors home"], [3, "Monsters memory", "Monster is telling his story"], [4, "Forest", "Where murder happens"], [5, "general", "general stage"]]}'
+  # Process the stages data.
+  stagesData = JSON.parse stagesJsonData
+  for stage in stagesData.__stages__
+    Stage.createNewStage stage[0], stage[1], (err, stage) ->
+      if error?
+        console.log 'Error while creating stage ' + stage + ': ' + err
 
-# Process the actors data.
-stagesData = JSON.parse stagesJsonData
-for stage in stagesData.__stages__
-  Stage.createNewStage stage[0], stage[1], (err, stage) ->
-    if error?
-      console.log 'Error while creating stage ' + stage + ': ' + err
+
+######################## Import roles ########################
+# Send a post request to get the roles data.
+request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__roles__%5D', (error, response, rolesJsonData) ->
+  console.log 'Data: ' + rolesJsonData
+
+  # Process the roles data.
+  rolesData = JSON.parse rolesJsonData
+  for role in rolesData.__roles__
+    Role.createNewStage role[0], role[1], (err, role) ->
+      if error?
+        console.log 'Error while creating role ' + role + ': ' + err
+
+
+######################## Import responsibilities ########################
+# Send a post request to get the roles data.
+request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__responsibilities__%5D', (error, response, respsJsonData) ->
+  console.log 'Data: ' + respsJsonData
+
+  # Process the roles data.
+  respsData = JSON.parse respsJsonData
+  for resp in respsData.__responsibilities__
+    Responsibility.createNewResponsibility resp[0], resp[1], (err, resp) ->
+      if error?
+        console.log 'Error while creating responsibility ' + resp + ': ' + err
+
+
+######################## Import events ########################
