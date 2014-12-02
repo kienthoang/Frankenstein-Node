@@ -77,19 +77,22 @@ request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__responsibiliti
 ######################## Import events ########################
 # Send a post request to get the events data.
 request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=[mangoevents]', (error, response, eventsJsonData) ->
-  console.log 'Data: ' + eventsJsonData
+  #console.log 'Data: ' + eventsJsonData
 
   # Process the roles data.
   eventsData = JSON.parse eventsJsonData
-  for id, eventData of eventsData
-    Event.create {}, (err, eventObj) ->
-      eventObj.name = eventData[0]
-      eventObj.psql_id = id
-      eventObj.description = eventData[1]
-      eventObj.duration = eventData[2]
-      eventObj.stage_psql_id = eventData[3]
-      eventObj.time = moment eventData[4]
-      eventObj.actors = eventData[5]
-      eventObj.save (err) ->
-        unless err?
-          console.log 'New event: ' + eventObj
+  for index, eventData of eventsData
+    do (eventData) ->
+      Event.create {}, (err, eventObj) ->
+        eventObj.psql_id = eventData[0]
+        eventObj.name = eventData[1]
+        eventObj.description = eventData[2]
+        eventObj.duration = eventData[3]
+        eventObj.stage_psql_id = eventData[4]
+        eventObj.time = moment eventData[5]
+        eventObj.actors = eventData[6]
+        eventObj.save (err) ->
+          unless err?
+            console.log 'New event: ' + eventObj
+          else
+            console.log 'Error while creating a new event: ' + err

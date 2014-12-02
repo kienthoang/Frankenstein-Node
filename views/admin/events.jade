@@ -1,0 +1,9 @@
+!= css("admin/events")
+!= js("admin/events")
+
+select.events-select
+  option(value="" selected) Select an event
+  each event in events
+    option(value= event.psql_id)= event.name
+
+div.event-edit-space

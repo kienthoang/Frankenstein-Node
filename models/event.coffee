@@ -10,4 +10,7 @@ EventSchema = new mongoose.Schema
   stage_psql_id: String
 
 Event = mongoose.model "Event", EventSchema
+Event.findByPsqlId = (psql_id, callback) ->
+  @find {psql_id}, callback
+
 module.exports = Event
