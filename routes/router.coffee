@@ -1,10 +1,10 @@
-require 'sugar'
-
 Actor = require '../models/actor'
 Event = require '../models/event'
 Role = require '../models/role'
 User = require '../models/user'
 
+require 'sugar'
+moment = require 'moment'
 passport = require 'passport'
 
 module.exports = (app) ->
@@ -61,7 +61,11 @@ module.exports = (app) ->
           event.times = []
           event.actorsByTimes = {}
           for e in events
-            event.times.push e.time
+            event.times.push
+              event_id: e.id
+              original: e.time
+              date: moment(e.time).format 'YYYY-MM-DD'
+              time: moment(e.time).format 'HH:MM'
             event.actorsByTimes[e.time] = e.actors.map (actorRole) ->
               actorRole =
                 actor: actorsMap[actorRole.actor_id]
@@ -69,3 +73,31 @@ module.exports = (app) ->
               return actorRole
               
           res.render 'admin/event-edit', {event}
+
+
+  app.post '/admin/events/:id/edit', (req, res) ->
+    newName = req.body.name
+    times = req.body.times
+    timesMap = {}
+    for time in times
+      timesMap[time.eventId] = time.time
+
+    Event.findByPsqlId req.params.id, (err, events) ->
+      for event in events
+        event.name = newName
+        event.time = moment(timesMap[event.id]).toDate()
+      for event in events
+        event.save (err) -> console.log 'Saved!'
+
+      for newEventTime in req.body.newTimes
+        do (newEventTime) ->
+          newEvent =
+            name: events[0].name
+            description: events[0].description
+            duration: events[0].duration
+            psql_id: events[0].psql_id
+            stage_psql_id: events[0].stage_psql_id
+            time: moment(newEventTime).toDate()
+          Event.create newEvent, (err, nE) -> console.log 'Error: ' + err if err?
+
+      res.send 'OK'

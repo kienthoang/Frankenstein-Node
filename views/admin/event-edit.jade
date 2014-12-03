@@ -1,8 +1,30 @@
-input(type="text", value=event.name)
+input.event-name-input(type="text", value=event.name, data-id= event.psql_id)
 
 div.event-times-rows
   each time in event.times
-    a.event-time-modal-controller(href="#")= time
+    div.event-time-row(data-id= time.event_id)
+      input.event-date-input(type= "date", value= time.date)
+      input.event-time-input(type= "time", value= time.time)
+      button.event-time-modal-controller Edit Actors and Roles
+      div.event-time-modal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="Edit Event", aria-hidden="true")
+        div.modal-dialog
+          div.modal-content
+            div.modal-header
+              button.close(type="button", data-dismiss="modal")
+                span(aria-hidden="true") &times;
+                span.sr-only Close
+              h4.modal-title Edit Event
+            div.modal-body
+              each actorRole in event.actorsByTimes[time.original]
+                div= actorRole.actor.name + ' - ' + actorRole.role.name
+            div.modal-footer
+              button.btn.btn-default(type="button", data-dismiss="modal") Close
+              button.btn.btn-primary(type="button") Save changes
+
+  div.prototype-new-event-time-row
+    input.event-date-input(type= "date")
+    input.event-time-input(type= "time")
+    button.event-time-modal-controller Edit Actors and Roles
     div.event-time-modal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="Edit Event", aria-hidden="true")
       div.modal-dialog
         div.modal-content
@@ -12,11 +34,10 @@ div.event-times-rows
               span.sr-only Close
             h4.modal-title Edit Event
           div.modal-body
-            each actorRole in event.actorsByTimes[time]
-              div= actorRole.actor.name + ' - ' + actorRole.role.name
           div.modal-footer
             button.btn.btn-default(type="button", data-dismiss="modal") Close
             button.btn.btn-primary(type="button") Save changes
 
-div
+div.event-edit-controls
+  button.add-event-button.btn Add Event
   button.submit-event-edit.btn.btn-success Save Changes
