@@ -23,7 +23,8 @@ $ ->
     $('.event-time-row').each ->
       eventId = $(this).attr 'data-id'
       time = $(this).find('.event-date-input').val() + ' ' + $(this).find('.event-time-input').val()
-      data.times.push {eventId, time}
+      toBeDeleted = $(this).find('.event-deletion-checkbox').is ':checked'
+      data.times.push {eventId, time, toBeDeleted}
 
     $('.new-event-time-row').each ->
       dateVal = $(this).find('.event-date-input').val()

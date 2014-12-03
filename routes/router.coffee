@@ -80,14 +80,20 @@ module.exports = (app) ->
     times = req.body.times
     timesMap = {}
     for time in times
-      timesMap[time.eventId] = time.time
+      timesMap[time.eventId] =
+        toBeDeleted: time.toBeDeleted
+        time: time.time
 
     Event.findByPsqlId req.params.id, (err, events) ->
       for event in events
-        event.name = newName
-        event.time = moment(timesMap[event.id]).toDate()
+        unless timesMap[event.id].toBeDeleted
+          event.name = newName
+          event.time = moment(timesMap[event.id].time).toDate()
       for event in events
-        event.save (err) -> console.log 'Saved!'
+        if timesMap[event.id].toBeDeleted
+          Event.findByIdAndRemove event.id, (err) -> console.log 'Deleted!'
+        else
+          event.save (err) -> console.log 'Saved!'
 
       for newEventTime in req.body.newTimes
         do (newEventTime) ->
