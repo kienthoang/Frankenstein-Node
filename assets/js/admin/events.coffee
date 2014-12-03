@@ -45,3 +45,21 @@ $ ->
     $newEventRow = $('.prototype-new-event-time-row').clone()
     $newEventRow.appendTo $('.event-times-rows')
     $newEventRow.removeClass('prototype-new-event-time-row').addClass 'new-event-time-row'
+
+  $(document).on 'click', '.add-actor-role-button', (e) ->
+    $newActorRoleRow = $('.actor-role-selection:last').clone()
+    $newActorRoleRow.insertBefore $(this)
+
+  $(document).on 'click', '.save-actor-role-changes', (e) ->
+    actorRoles = []
+    $(this).parent().parent().find('.actor-role-selection').each ->
+      actorRoles.push
+        actor_id: $(this).find('.actor-select-menu').val()
+        role_id: $(this).find('.role-select-menu').val()
+
+    eventId = $(this).closest('.event-time-row').attr 'data-id'
+    $.ajax
+      type: 'POST'
+      url: '/admin/events-actors-roles/' + eventId
+      contentType: 'application/json'
+      data: JSON.stringify {actorRoles}

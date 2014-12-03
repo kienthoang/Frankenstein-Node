@@ -110,3 +110,12 @@ module.exports = (app) ->
           Event.create newEvent, (err, nE) -> console.log 'Error: ' + err if err?
 
       res.send 'OK'
+
+
+  app.post '/admin/events-actors-roles/:eid', (req, res) ->
+    Event.findById req.params.eid, (err, event) ->
+      event.actors = req.body.actorRoles
+      event.markModified 'actors'
+      event.save (err) ->
+        console.log 'Success!' unless err?
+        res.send "OK"
