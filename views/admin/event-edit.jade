@@ -6,8 +6,6 @@ div.event-times-rows
       input.event-date-input(type= "date", value= time.date)
       input.event-time-input(type= "time", value= time.time)
       button.event-time-modal-controller Edit Actors and Roles
-      input.event-deletion-checkbox(type= "checkbox")
-      span Mark for deletion
       div.event-time-modal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="Edit Event", aria-hidden="true")
         div.modal-dialog
           div.modal-content
@@ -22,6 +20,8 @@ div.event-times-rows
             div.modal-footer
               button.btn.btn-default(type="button", data-dismiss="modal") Close
               button.btn.btn-primary(type="button") Save changes
+      input.event-deletion-checkbox(type= "checkbox")
+      span Mark for deletion
 
   div.prototype-new-event-time-row
     input.event-date-input(type= "date")
