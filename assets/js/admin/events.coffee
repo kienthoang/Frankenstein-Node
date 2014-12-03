@@ -53,9 +53,11 @@ $ ->
   $(document).on 'click', '.save-actor-role-changes', (e) ->
     actorRoles = []
     $(this).parent().parent().find('.actor-role-selection').each ->
-      actorRoles.push
-        actor_id: $(this).find('.actor-select-menu').val()
-        role_id: $(this).find('.role-select-menu').val()
+      shouldBeIncluded = not $(this).find('.actor-role-removal').is ':checked'
+      if shouldBeIncluded
+        actorRoles.push
+          actor_id: $(this).find('.actor-select-menu').val()
+          role_id: $(this).find('.role-select-menu').val()
 
     eventId = $(this).closest('.event-time-row').attr 'data-id'
     $.ajax

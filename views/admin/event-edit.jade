@@ -30,6 +30,9 @@ div.event-times-rows
                         option(value= role.psql_id selected)= role.name
                       - else
                         option(value= role.psql_id)= role.name
+                  div
+                    input.actor-role-removal(type= "checkbox")
+                    span Mark for Removal
 
               button.btn.btn-primary.add-actor-role-button Add an actor
 
