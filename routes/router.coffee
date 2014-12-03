@@ -72,7 +72,10 @@ module.exports = (app) ->
                 role: rolesMap[actorRole.role_id]
               return actorRole
               
-          res.render 'admin/event-edit', {event}
+          res.render 'admin/event-edit',
+            event: event
+            actors: actors
+            roles: roles
 
 
   app.post '/admin/events/:id/edit', (req, res) ->

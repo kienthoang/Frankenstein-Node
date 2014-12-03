@@ -16,9 +16,24 @@ div.event-times-rows
               h4.modal-title Edit Event
             div.modal-body
               each actorRole in event.actorsByTimes[time.original]
-                div= actorRole.actor.name + ' - ' + actorRole.role.name
+                div.actor-role-selection
+                  select.actor-select-menu.actor-role-select-menu
+                    each actor in actors
+                      - if (actor.id == actorRole.actor.id)
+                        option(val= actor.id selected)= actor.name
+                      - else
+                        option(val= actor.id)= actor.name
+                  span playing
+                  select.role-select-menu.actor-role-select-menu
+                    each role in roles
+                      - if (role.id == actorRole.role.id)
+                        option(val= role.id selected)= role.name
+                      - else
+                        option(val= role.id)= role.name
+
+              button.btn.btn-primary.add-actor-role-button Add an actor
+
             div.modal-footer
-              button.btn.btn-default(type="button", data-dismiss="modal") Close
               button.btn.btn-primary(type="button") Save changes
       input.event-deletion-checkbox(type= "checkbox")
       span Mark for deletion
@@ -37,7 +52,6 @@ div.event-times-rows
             h4.modal-title Edit Event
           div.modal-body
           div.modal-footer
-            button.btn.btn-default(type="button", data-dismiss="modal") Close
             button.btn.btn-primary(type="button") Save changes
 
 div.event-edit-controls
