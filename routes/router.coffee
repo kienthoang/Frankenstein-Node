@@ -65,7 +65,8 @@ module.exports = (app) ->
               event_id: e.id
               original: e.time
               date: moment(e.time).format 'YYYY-MM-DD'
-              time: moment(e.time).format 'HH:MM'
+              time: moment(e.time).format 'HH:mm'
+            console.log 'Time: ' + e.time + ' compared to ' + moment(e.time).format 'HH:mm'
             event.actorsByTimes[e.time] = e.actors.map (actorRole) ->
               actorRole =
                 actor: actorsMap[actorRole.actor_id]
