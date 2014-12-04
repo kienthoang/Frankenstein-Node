@@ -50,11 +50,24 @@ module.exports = (app) ->
     app.renderViewWithLayout res, 'admin/event-create'
 
   app.post '/admin/events/create', (req, res) ->
-    Event.create {name: req.body.name}, (err, event) ->
-      event.psql_id = event.id
-      event.save (err) ->
-        console.log 'Created event: ' + event.name
-        res.send 'OK'
+    Event.find {}, (err, events) ->
+      psql_id = 1 + parseInt(events.max((e) -> return parseInt(e.psql_id)).psql_id)
+      Event.create {event_time_psql_id: 2 + parseInt(events.max((e) -> return parseInt(e.event_time_psql_id)).event_time_psql_id), name: req.body.name, duration: req.body.duration, description: req.body.description, psql_id: psql_id, time: new Date()}, (err, event) ->
+        event.save (err) ->
+          request 'http://tomcat.cs.lafayette.edu:3300/events/create?id=' + event.psql_id + '&new_name=' + event.name + '&description=' + event.description + '&duration=' + event.duration, ->
+            console.log 'Created event: ' + event.name + ' error: ' + err
+            newEventTime =
+              name: event.name
+              times: []
+              event_id: event.psql_id
+              new_times: [{
+                id: 2 + parseInt(events.max((e) -> return parseInt(e.event_time_psql_id)).event_time_psql_id)
+                date: moment(event.time).format 'YYYY-MM-DD HH:mm'
+              }]
+              deleted_times: []
+            postData = JSON.stringify(newEventTime).escapeURL()
+            request 'http://tomcat.cs.lafayette.edu:3300/events/edit?data=' + postData, ->
+              res.send 'OK'
 
   app.get '/admin/events/:id', (req, res) ->
     Actor.find {}, (err, actors) ->
@@ -139,11 +152,13 @@ module.exports = (app) ->
               psql_id: events[0].psql_id
               stage_psql_id: events[0].stage_psql_id
               time: moment(newEventTime).toDate()
-              event_time_psql_id: allEventTimes.length + 1
+              event_time_psql_id: 1 + parseInt(allEventTimes.max((e) -> return parseInt(e.event_time_psql_id)).event_time_psql_id)
             syncData.new_times.push
               id: newEvent.event_time_psql_id
-              date: moment(newEvent.time).format 'YYYY-MM-DD HH-mm'
+              date: moment(newEvent.time).format 'YYYY-MM-DD HH:mm'
+            postData = JSON.stringify(syncData).escapeURL()
             request 'http://tomcat.cs.lafayette.edu:3300/events/edit?data=' + postData
+            console.log 'Sending ' + 'http://tomcat.cs.lafayette.edu:3300/events/edit?data=' + postData
             Event.create newEvent, (err, nE) ->
               console.log 'Error: ' + err if err?
               nE.save (err) -> console.log 'Error: ' + err if err?
@@ -157,13 +172,19 @@ module.exports = (app) ->
       event.markModified 'actors'
       event.save (err) ->
         console.log 'Success!' unless err?
+        syncData =
+          event_time_id: event.event_time_psql_id
+          actorRolePairs: req.body.actorRoles
+        postData = JSON.stringify(syncData).escapeURL()
+        request 'http://tomcat.cs.lafayette.edu:3300/events/actors-roles-edit?data=' + postData
         res.send "OK"
 
   app.post '/admin/events/:eid/delete', (req, res) ->
     Event.findByPsqlId req.params.eid, (err, events) ->
       for event in events
         Event.findByIdAndRemove event.id, (err) -> console.log 'Deleted'
-      res.send 'OK'
+      request 'http://tomcat.cs.lafayette.edu:3300/events/delete?id=' + events[0].psql_id, ->
+        res.send 'OK'
 
   app.get '/admin/actors', (req, res) ->
     Actor.find {}, (err, actors) ->
@@ -179,11 +200,13 @@ module.exports = (app) ->
     app.renderViewWithLayout res, 'admin/actor-create'
 
   app.post '/admin/actors/create', (req, res) ->
-    Actor.create {name: req.body.name}, (err, actor) ->
-      actor.psql_id = actor.id
-      actor.save (err) ->
-        console.log 'Created actor: ' + actor.name
-        res.send 'OK'
+    Actor.find {}, (err, actors) ->
+      psql_id = 1 + parseInt(actors.max((a) -> return parseInt(a.psql_id)).psql_id)
+      Actor.create {name: req.body.name, psql_id: psql_id}, (err, actor) ->
+        actor.save (err) ->
+          console.log 'Created actor: ' + actor.name
+          request 'http://tomcat.cs.lafayette.edu:3300/actors/create?id=' + actor.psql_id + '&new_name=' + actor.name
+          res.send 'OK'
 
   app.get '/admin/actors/:id', (req, res) ->
     Actor.findByPsqlId req.params.id, (err, actor) ->
@@ -192,11 +215,15 @@ module.exports = (app) ->
   app.post '/admin/actors/:id/edit', (req, res) ->
     Actor.findByPsqlId req.params.id, (err, actor) ->
       actor.name = req.body.name
-      actor.save (err) -> res.send 'OK'
+      actor.save (err) ->
+        request 'http://tomcat.cs.lafayette.edu:3300/actors/edit?id=' + actor.psql_id + '&new_name=' + actor.name
+        res.send 'OK'
 
   app.post '/admin/actors/:id/delete', (req, res) ->
     Actor.findByPsqlId req.params.id, (err, actor) ->
       Actor.findByIdAndRemove actor.id, ->
+        console.log 'HEY!'
+        request 'http://tomcat.cs.lafayette.edu:3300/actors/delete?id=' + actor.psql_id
         res.send 'OK'
 
   app.get '/admin/roles', (req, res) ->
@@ -213,11 +240,13 @@ module.exports = (app) ->
     app.renderViewWithLayout res, 'admin/role-create'
 
   app.post '/admin/roles/create', (req, res) ->
-    Role.create {name: req.body.name}, (err, role) ->
-      role.psql_id = role.id
-      role.save (err) ->
-        console.log 'Created role: ' + role.name
-        res.send 'OK'
+    Role.find {}, (err, roles) ->
+      psql_id = parseInt(roles.max((a) -> return parseInt(a.psql_id)).psql_id) + 1
+      Role.create {name: req.body.name, psql_id: psql_id}, (err, role) ->
+        role.save (err) ->
+          console.log 'Created role: ' + role.name
+          request 'http://tomcat.cs.lafayette.edu:3300/roles/create?id=' + role.psql_id + '&new_name=' + role.name
+          res.send 'OK'
 
   app.get '/admin/roles/:id', (req, res) ->
     Role.findByPsqlId req.params.id, (err, role) ->
@@ -226,9 +255,12 @@ module.exports = (app) ->
   app.post '/admin/roles/:id/edit', (req, res) ->
     Role.findByPsqlId req.params.id, (err, role) ->
       role.name = req.body.name
-      role.save (err) -> res.send 'OK'
+      role.save (err) ->
+        request 'http://tomcat.cs.lafayette.edu:3300/roles/edit?id=' + role.psql_id + '&new_name=' + role.name
+        res.send 'OK'
 
   app.post '/admin/roles/:id/delete', (req, res) ->
     Role.findByPsqlId req.params.id, (err, role) ->
       Role.findByIdAndRemove role.id, ->
+        request 'http://tomcat.cs.lafayette.edu:3300/roles/delete?id=' + role.psql_id
         res.send 'OK'

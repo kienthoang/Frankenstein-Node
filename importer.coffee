@@ -11,7 +11,7 @@ Stage = require './models/stage'
 ######################## Import actors ########################
 
 # Send a post request to get the actors data.
-request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__actors__%5D', (error, response, actorsJsonData) ->
+request 'http://tomcat.cs.lafayette.edu:3300/mongopie/?types=%5B__actors__%5D', (error, response, actorsJsonData) ->
   console.log 'Data: ' + actorsJsonData
 
   # Process the actors data.
@@ -24,7 +24,7 @@ request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__actors__%5D', 
 
 ######################## Import crew ########################
 # Send a post request to get the crew data.
-request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__crew__%5D', (error, response, crewJsonData) ->
+request 'http://tomcat.cs.lafayette.edu:3300/mongopie/?types=%5B__crew__%5D', (error, response, crewJsonData) ->
   console.log 'Data: ' + crewJsonData
 
   # Process the crew data.
@@ -37,7 +37,7 @@ request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__crew__%5D', (e
 
 ######################## Import stages ########################
 # Send a post request to get the stages data.
-request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__stages__%5D', (error, response, stagesJsonData) ->
+request 'http://tomcat.cs.lafayette.edu:3300/mongopie/?types=%5B__stages__%5D', (error, response, stagesJsonData) ->
   console.log 'Data: ' + stagesJsonData
 
   # Process the stages data.
@@ -50,7 +50,7 @@ request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__stages__%5D', 
 
 ######################## Import roles ########################
 # Send a post request to get the roles data.
-request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__roles__%5D', (error, response, rolesJsonData) ->
+request 'http://tomcat.cs.lafayette.edu:3300/mongopie/?types=%5B__roles__%5D', (error, response, rolesJsonData) ->
   console.log 'Data: ' + rolesJsonData
 
   # Process the roles data.
@@ -63,7 +63,7 @@ request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__roles__%5D', (
 
 ######################## Import responsibilities ########################
 # Send a post request to get the roles data.
-request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__responsibilities__%5D', (error, response, respsJsonData) ->
+request 'http://tomcat.cs.lafayette.edu:3300/mongopie/?types=%5B__responsibilities__%5D', (error, response, respsJsonData) ->
   console.log 'Data: ' + respsJsonData
 
   # Process the roles data.
@@ -76,7 +76,7 @@ request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=%5B__responsibiliti
 
 ######################## Import events ########################
 # Send a post request to get the events data.
-request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=[mangoevents]', (error, response, eventsJsonData) ->
+request 'http://tomcat.cs.lafayette.edu:3300/mongopie/?types=[mangoevents]', (error, response, eventsJsonData) ->
   #console.log 'Data: ' + eventsJsonData
 
   # Process the roles data.
