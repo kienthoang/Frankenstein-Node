@@ -77,17 +77,18 @@ module.exports = (app) ->
               original: e.time
               date: moment(e.time).format 'YYYY-MM-DD'
               time: moment(e.time).format 'HH:mm'
-            event.actorsByTimes[e.time] = e.actors.map (actorRole) ->
-              actorRole =
-                actor: actorsMap[actorRole.actor_id]
-                role: rolesMap[actorRole.role_id]
-              return actorRole
+            actorRoles = []
+            for actorRole in e.actors
+              actor = actorsMap[actorRole.actor_id]
+              role = rolesMap[actorRole.role_id]
+              if actor? and role?
+                actorRoles.push {actor, role}
+            event.actorsByTimes[e.time] = actorRoles
               
           res.render 'admin/event-edit',
             event: event
             actors: actors
             roles: roles
-
 
   app.post '/admin/events/:id/edit', (req, res) ->
     newName = req.body.name
@@ -166,10 +167,34 @@ module.exports = (app) ->
 
   app.get '/admin/actors', (req, res) ->
     Actor.find {}, (err, actors) ->
-      # Aggregate the events by their psql_id
+      # Aggregate the actors by their psql_id
       actorsMap = {}
       for actor in actors
-        eventsMap[event.psql_id] = event
-      events = Object.values eventsMap
-      events = events.sortBy (event) -> event.name
-      app.renderViewWithLayout res, 'admin/events', {events}
+        actorsMap[actor.psql_id] = actor
+      actors = Object.values actorsMap
+      actors = actors.sortBy (actor) -> actor.name
+      app.renderViewWithLayout res, 'admin/actors', {actors}
+
+  app.get '/admin/actors/create', (req, res) ->
+    app.renderViewWithLayout res, 'admin/actor-create'
+
+  app.post '/admin/actors/create', (req, res) ->
+    Actor.create {name: req.body.name}, (err, actor) ->
+      actor.psql_id = actor.id
+      actor.save (err) ->
+        console.log 'Created actor: ' + actor.name
+        res.send 'OK'
+
+  app.get '/admin/actors/:id', (req, res) ->
+    Actor.findByPsqlId req.params.id, (err, actor) ->
+      app.renderViewWithLayout res, 'admin/actor-edit', {actor}
+
+  app.post '/admin/actors/:id/edit', (req, res) ->
+    Actor.findByPsqlId req.params.id, (err, actor) ->
+      actor.name = req.body.name
+      actor.save (err) -> res.send 'OK'
+
+  app.post '/admin/actors/:id/delete', (req, res) ->
+    Actor.findByPsqlId req.params.id, (err, actor) ->
+      Actor.findByIdAndRemove actor.id, ->
+        res.send 'OK'

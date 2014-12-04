@@ -1,0 +1,10 @@
+!= css("admin/actors")
+!= js("admin/actors")
+
+select.actors-select
+  option(value="" selected) Select an actor
+  each actor in actors
+    option(value= actor.psql_id)= actor.name
+a.btn.btn-primary.create-new-actor(href= '/admin/actors/create') Create New Actor
+
+div.actor-edit-space

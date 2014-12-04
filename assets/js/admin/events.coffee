@@ -78,7 +78,4 @@ $ ->
       type: 'POST'
       url: '/admin/events/' + selectedEventId + '/delete'
       success: ->
-        window.location.href = '/admin/events'
-
-  $(document).on 'click', '.create-new-event', (e) ->
-    
+        window.location.href = '/admin/events'    

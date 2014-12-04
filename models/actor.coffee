@@ -11,4 +11,7 @@ Actor.createNewActor = (psql_id, name, callback) ->
   record = {psql_id, name}
   @create record, callback
 
+Actor.findByPsqlId = (psql_id, callback) ->
+  @findOne {psql_id}, callback
+
 module.exports = Actor
