@@ -6,6 +6,7 @@ User = require '../models/user'
 require 'sugar'
 moment = require 'moment'
 passport = require 'passport'
+request = require 'request'
 
 module.exports = (app) ->
   app.renderViewWithLayout = (res, view, locals= {}) ->
@@ -36,7 +37,7 @@ module.exports = (app) ->
     app.renderViewWithLayout res, 'index', { title: 'Express' }
 
   app.get '/admin/events', (req, res) ->
-    events = Event.find {}, (err, events) ->
+    Event.find {}, (err, events) ->
       # Aggregate the events by their psql_id
       eventsMap = {}
       for event in events
@@ -44,6 +45,16 @@ module.exports = (app) ->
       events = Object.values eventsMap
       events = events.sortBy (event) -> event.name
       app.renderViewWithLayout res, 'admin/events', {events}
+
+  app.get '/admin/events/create', (req, res) ->
+    app.renderViewWithLayout res, 'admin/event-create'
+
+  app.post '/admin/events/create', (req, res) ->
+    Event.create {name: req.body.name}, (err, event) ->
+      event.psql_id = event.id
+      event.save (err) ->
+        console.log 'Created event: ' + event.name
+        res.send 'OK'
 
   app.get '/admin/events/:id', (req, res) ->
     Actor.find {}, (err, actors) ->
@@ -66,7 +77,6 @@ module.exports = (app) ->
               original: e.time
               date: moment(e.time).format 'YYYY-MM-DD'
               time: moment(e.time).format 'HH:mm'
-            console.log 'Time: ' + e.time + ' compared to ' + moment(e.time).format 'HH:mm'
             event.actorsByTimes[e.time] = e.actors.map (actorRole) ->
               actorRole =
                 actor: actorsMap[actorRole.actor_id]
@@ -88,29 +98,56 @@ module.exports = (app) ->
         toBeDeleted: time.toBeDeleted
         time: time.time
 
-    Event.findByPsqlId req.params.id, (err, events) ->
-      for event in events
-        unless timesMap[event.id].toBeDeleted
-          event.name = newName
-          event.time = moment(timesMap[event.id].time).toDate()
-      for event in events
-        if timesMap[event.id].toBeDeleted
-          Event.findByIdAndRemove event.id, (err) -> console.log 'Deleted!'
-        else
-          event.save (err) -> console.log 'Saved!'
+    # Sync data. To be sent to the psql database.
+    syncData =
+        name: newName
+        times: []
+        event_id: ''
+        new_times: []
+        deleted_times: []
 
-      for newEventTime in req.body.newTimes
-        do (newEventTime) ->
-          newEvent =
-            name: events[0].name
-            description: events[0].description
-            duration: events[0].duration
-            psql_id: events[0].psql_id
-            stage_psql_id: events[0].stage_psql_id
-            time: moment(newEventTime).toDate()
-          Event.create newEvent, (err, nE) -> console.log 'Error: ' + err if err?
+    Event.find {}, (err, allEventTimes) ->
+      Event.findByPsqlId req.params.id, (err, events) ->
+        syncData.event_id = events[0].psql_id
 
-      res.send 'OK'
+        for event in events
+          unless timesMap[event.id].toBeDeleted
+            event.name = newName
+            event.time = moment(timesMap[event.id].time).toDate()
+        for event in events
+          do (event) ->
+            if timesMap[event.id].toBeDeleted
+              syncData.deleted_times.push event.event_time_psql_id
+              Event.findByIdAndRemove event.id, (err) -> console.log 'Deleted!'
+            else
+              syncData.times.push
+                id: event.event_time_psql_id
+                date: timesMap[event.id].time
+              event.save (err) -> console.log 'Saved!'
+
+        postData = JSON.stringify(syncData).escapeURL()
+        if req.body.newTimes.length == 0
+          request 'http://tomcat.cs.lafayette.edu:3300/events/edit?data=' + postData
+
+        for newEventTime in req.body.newTimes
+          do (newEventTime) ->
+            newEvent =
+              name: events[0].name
+              description: events[0].description
+              duration: events[0].duration
+              psql_id: events[0].psql_id
+              stage_psql_id: events[0].stage_psql_id
+              time: moment(newEventTime).toDate()
+              event_time_psql_id: allEventTimes.length + 1
+            syncData.new_times.push
+              id: newEvent.event_time_psql_id
+              date: moment(newEvent.time).format 'YYYY-MM-DD HH-mm'
+            request 'http://tomcat.cs.lafayette.edu:3300/events/edit?data=' + postData
+            Event.create newEvent, (err, nE) ->
+              console.log 'Error: ' + err if err?
+              nE.save (err) -> console.log 'Error: ' + err if err?
+
+        res.send 'OK'
 
 
   app.post '/admin/events-actors-roles/:eid', (req, res) ->
@@ -120,3 +157,19 @@ module.exports = (app) ->
       event.save (err) ->
         console.log 'Success!' unless err?
         res.send "OK"
+
+  app.post '/admin/events/:eid/delete', (req, res) ->
+    Event.findByPsqlId req.params.eid, (err, events) ->
+      for event in events
+        Event.findByIdAndRemove event.id, (err) -> console.log 'Deleted'
+      res.send 'OK'
+
+  app.get '/admin/actors', (req, res) ->
+    Actor.find {}, (err, actors) ->
+      # Aggregate the events by their psql_id
+      actorsMap = {}
+      for actor in actors
+        eventsMap[event.psql_id] = event
+      events = Object.values eventsMap
+      events = events.sortBy (event) -> event.name
+      app.renderViewWithLayout res, 'admin/events', {events}

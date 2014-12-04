@@ -82,8 +82,9 @@ request 'http://tomcat.cs.lafayette.edu:3000/mongopie/?types=[mangoevents]', (er
   # Process the roles data.
   eventsData = JSON.parse eventsJsonData
   for index, eventData of eventsData
-    do (eventData) ->
+    do (index, eventData) ->
       Event.create {}, (err, eventObj) ->
+        eventObj.event_time_psql_id = index;
         eventObj.psql_id = eventData[0]
         eventObj.name = eventData[1]
         eventObj.description = eventData[2]

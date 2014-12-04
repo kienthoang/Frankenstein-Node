@@ -15,6 +15,17 @@ div.event-times-rows
                 span.sr-only Close
               h4.modal-title Edit Event
             div.modal-body
+              div.prototype-actor-role-selection
+                select.actor-select-menu.actor-role-select-menu
+                  each actor in actors
+                    option(value= actor.psql_id)= actor.name
+                span playing
+                select.role-select-menu.actor-role-select-menu
+                  each role in roles
+                    option(value= role.psql_id)= role.name
+                div
+                  input.actor-role-removal(type= "checkbox")
+                  span Mark for Removal
               each actorRole in event.actorsByTimes[time.original]
                 div.actor-role-selection
                   select.actor-select-menu.actor-role-select-menu
@@ -60,3 +71,4 @@ div.event-times-rows
 div.event-edit-controls
   button.add-event-button.btn Add Event
   button.submit-event-edit.btn.btn-success Save Changes
+  button.delete-event-button.btn.btn-danger Delete Event

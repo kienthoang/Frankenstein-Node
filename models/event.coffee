@@ -8,6 +8,7 @@ EventSchema = new mongoose.Schema
   actors: Array
   duration: Number
   stage_psql_id: String
+  event_time_psql_id: String
 
 Event = mongoose.model "Event", EventSchema
 Event.findByPsqlId = (psql_id, callback) ->

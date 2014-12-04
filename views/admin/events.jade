@@ -5,5 +5,6 @@ select.events-select
   option(value="" selected) Select an event
   each event in events
     option(value= event.psql_id)= event.name
+a.btn.btn-primary.create-new-event(href= '/admin/events/create') Create New Event
 
 div.event-edit-space

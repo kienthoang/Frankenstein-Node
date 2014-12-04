@@ -1,4 +1,5 @@
 $ ->
+  selectedEventId = ''
   $('.events-select').on 'change', (e) ->
     selectedEventId = $(this).val()
     $editSpace = $('.event-edit-space')
@@ -47,17 +48,22 @@ $ ->
     $newEventRow.removeClass('prototype-new-event-time-row').addClass 'new-event-time-row'
 
   $(document).on 'click', '.add-actor-role-button', (e) ->
-    $newActorRoleRow = $('.actor-role-selection:last').clone()
+    $modal = $(this).closest '.event-time-modal'
+    $newActorRoleRow = $modal.find('.prototype-actor-role-selection').clone()
+    $newActorRoleRow.removeClass('prototype-actor-role-selection').addClass 'actor-role-selection'
     $newActorRoleRow.insertBefore $(this)
 
   $(document).on 'click', '.save-actor-role-changes', (e) ->
     actorRoles = []
-    $(this).parent().parent().find('.actor-role-selection').each ->
+    $modal = $(this).closest '.event-time-modal'
+    $modal.find('.actor-role-selection').each ->
       shouldBeIncluded = not $(this).find('.actor-role-removal').is ':checked'
       if shouldBeIncluded
         actorRoles.push
           actor_id: $(this).find('.actor-select-menu').val()
           role_id: $(this).find('.role-select-menu').val()
+      else
+        $(this).remove()
 
     eventId = $(this).closest('.event-time-row').attr 'data-id'
     $.ajax
@@ -65,3 +71,14 @@ $ ->
       url: '/admin/events-actors-roles/' + eventId
       contentType: 'application/json'
       data: JSON.stringify {actorRoles}
+
+  $(document).on 'click', '.delete-event-button', (e) ->
+    alert '/admin/events/' + selectedEventId + '/delete'
+    $.ajax
+      type: 'POST'
+      url: '/admin/events/' + selectedEventId + '/delete'
+      success: ->
+        window.location.href = '/admin/events'
+
+  $(document).on 'click', '.create-new-event', (e) ->
+    
