@@ -1,0 +1,9 @@
+!= js("admin/roles")
+
+select.roles-select
+  option(value="" selected) Select an role
+  each role in roles
+    option(value= role.psql_id)= role.name
+a.btn.btn-primary.create-new-role(href= '/admin/roles/create') Create New Role
+
+div.role-edit-space

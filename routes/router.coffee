@@ -198,3 +198,37 @@ module.exports = (app) ->
     Actor.findByPsqlId req.params.id, (err, actor) ->
       Actor.findByIdAndRemove actor.id, ->
         res.send 'OK'
+
+  app.get '/admin/roles', (req, res) ->
+    Role.find {}, (err, roles) ->
+      # Aggregate the roles by their psql_id
+      rolesMap = {}
+      for role in roles
+        rolesMap[role.psql_id] = role
+      roles = Object.values rolesMap
+      roles = roles.sortBy (actor) -> role.name
+      app.renderViewWithLayout res, 'admin/roles', {roles}
+
+  app.get '/admin/roles/create', (req, res) ->
+    app.renderViewWithLayout res, 'admin/role-create'
+
+  app.post '/admin/roles/create', (req, res) ->
+    Role.create {name: req.body.name}, (err, role) ->
+      role.psql_id = role.id
+      role.save (err) ->
+        console.log 'Created role: ' + role.name
+        res.send 'OK'
+
+  app.get '/admin/roles/:id', (req, res) ->
+    Role.findByPsqlId req.params.id, (err, role) ->
+      app.renderViewWithLayout res, 'admin/role-edit', {role}
+
+  app.post '/admin/roles/:id/edit', (req, res) ->
+    Role.findByPsqlId req.params.id, (err, role) ->
+      role.name = req.body.name
+      role.save (err) -> res.send 'OK'
+
+  app.post '/admin/roles/:id/delete', (req, res) ->
+    Role.findByPsqlId req.params.id, (err, role) ->
+      Role.findByIdAndRemove role.id, ->
+        res.send 'OK'
